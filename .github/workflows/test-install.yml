@@ -42,8 +42,6 @@ jobs:
         chmod +x params/batchUstSmall params/qvtSmall
         chmod +r params/*
         params/batchUstSmall
-        curl https://raw.githubusercontent.com/yuetloo/ci-test/main/1668381255361.input.json -o input.json
-        params/batchUstSmall ./1668381255361.input.json output.json
     - name: Checkout CLR
       uses: actions/checkout@v3
       with:
