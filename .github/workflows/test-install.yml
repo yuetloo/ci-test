@@ -42,5 +42,5 @@ jobs:
         chmod +x params/batchUstSmall params/qvtSmall
         chmod +r params/*
         params/batchUstSmall
-        ldd params/batchUstSmall
-        strings /lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
+        curl https://raw.githubusercontent.com/yuetloo/ci-test/main/1668381255361.input.json -o input.json
+        params/batchUstSmall ./1668381255361.input.json output.json
