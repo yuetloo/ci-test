@@ -1,0 +1,25 @@
+name: End to end tests
+
+on:
+  push
+
+env:
+  NODE_VERSION: 16.x
+  CIRCUIT_TYPE: small
+
+jobs:
+  build-snarks:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install g++ library dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+        ls -l /lib/x86_64-linux-gnu/libstdc++.so.6
+        ls -l /lib/x86_64-linux-gnu
+        strings /lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
+      
