@@ -54,30 +54,10 @@ jobs:
         cp params/BatchUpdateStateTreeVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         ln -s params $GITHUB_WORKSPACE/params
-    - name: Copy batch 64 params
+    - name: Download batch 64 params
       if: $CIRCUIT_TYPE == 'batch64'
       run: |
-        mkdir -p params
-        PKGS="batchUstCustom.r1cs batchUstCustom batchUstCustom.params qvtCircuitCustom.r1cs qvtCustom qvtCustom.params batchUstCustom.dat qvtCustom.dat batchUstCustom.sym qvtCustom.sym"
-        cd params
-        BASE_URL=https://maci-compile.s3.us-east-1.amazonaws.com/params-64
-        for p in $PKGS
-        do
-          url="$BASE_URL/$p"
-          echo "downloading $url"
-          curl $url -o $p
-        done
-        mv batchUstCustom batchUst32
-        mv batchUstCustom.r1cs batchUst32.r1cs
-        mv batchUstCustom.params batchUst32.params
-        mv qvtCustom qvt32
-        mv qvtCircuitCustom.r1cs qvtCircuit32.r1cs
-        mv qvtCustom.params qvt32.params
-        mv batchUstCustom.dat batchUst32.dat
-        mv qvtCustom.dat qvt32.dat
-        mv batchUstCustom.sym batchUst32.sym
-        mv qvtCustom.sym qvt32.sym
-        chmod u+x qvt32 batchUst32
+        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build CLR
       run: |
         cd monorepo
