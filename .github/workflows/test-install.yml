@@ -1,15 +1,27 @@
 name: End to end tests
 
 on:
-  push
+  push:
+    tags:
+      - '*'
 
 env:
   NODE_VERSION: 16.x
   CIRCUIT_TYPE: batch64
 
 jobs:
+  checkTag:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag:  ${{ steps.check.outputs.tag }}
+    steps:
+      - name: check tag name
+        run: |
+          TAG=${GITHUB_REF##*/}
+          echo "::set-output name=tag::$TAG"
   build-snarks:
     runs-on: ubuntu-22.04
+    needs: [checkTag]
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
@@ -27,7 +39,7 @@ jobs:
       run: |
         cargo install zkutil --version 0.3.2
     - name: Checkout MACI
-      if: $CIRCUIT_TYPE != 'batch64'
+      if: ${{ needs.checkTag.outputs.app }} != 'batch64'
       uses: actions/checkout@v3
       with:
         repository: privacy-scaling-explorations/maci
@@ -39,12 +51,12 @@ jobs:
         ref: fix/circuit-batch-size
         path: monorepo
     - name: Build MACI
-      if: $CIRCUIT_TYPE != 'batch64'
+      if:  ${{ needs.checkTag.outputs.app }} != 'batch64'
       run: |
         git config --global url."https://".insteadOf ssh://
         npm i && npm run bootstrap && npm run build
     - name: Build snarks - small
-      if: $CIRCUIT_TYPE == 'small'
+      if:  ${{ needs.checkTag.outputs.app }} == 'small'
       run: |
         cd circuits
         ./scripts/buildSnarksSmall.sh
@@ -55,7 +67,7 @@ jobs:
         cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         ln -s params $GITHUB_WORKSPACE/params
     - name: Download batch 64 params
-      if: $CIRCUIT_TYPE == 'batch64'
+      if:  ${{ needs.checkTag.outputs.app }} == 'batch64'
       run: |
         $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build CLR
