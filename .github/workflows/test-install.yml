@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: small
+  CIRCUIT_TYPE: batch64
 
 jobs:
   build-snarks:
@@ -27,6 +27,7 @@ jobs:
       run: |
         cargo install zkutil --version 0.3.2
     - name: Checkout MACI
+      if: $CIRCUIT_TYPE != 'batch64'
       uses: actions/checkout@v3
       with:
         repository: privacy-scaling-explorations/maci
@@ -38,10 +39,12 @@ jobs:
         ref: fix/circuit-batch-size
         path: monorepo
     - name: Build MACI
+      if: $CIRCUIT_TYPE != 'batch64'
       run: |
         git config --global url."https://".insteadOf ssh://
         npm i && npm run bootstrap && npm run build
-    - name: Build snarks
+    - name: Build snarks - small
+      if: $CIRCUIT_TYPE == 'small'
       run: |
         cd circuits
         ./scripts/buildSnarksSmall.sh
@@ -50,11 +53,42 @@ jobs:
         params/batchUstSmall
         cp params/BatchUpdateStateTreeVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
-    - name: Build and run e2e tests
+        ln -s params $GITHUB_WORKSPACE/params
+    - name: Copy batch 64 params
+      if: $CIRCUIT_TYPE == 'batch64'
+      run: |
+        mkdir -p params
+        PKGS="batchUstCustom.r1cs batchUstCustom batchUstCustom.params qvtCircuitCustom.r1cs qvtCustom qvtCustom.params batchUstCustom.dat qvtCustom.dat batchUstCustom.sym qvtCustom.sym"
+        cd params
+        BASE_URL=https://maci-compile.s3.us-east-1.amazonaws.com/params-64
+        for p in $PKGS
+        do
+          url="$BASE_URL/$p"
+          echo "downloading $url"
+          curl $url -o $p
+        done
+        mv batchUstCustom batchUst32
+        mv batchUstCustom.r1cs batchUst32.r1cs
+        mv batchUstCustom.params batchUst32.params
+        mv qvtCustom qvt32
+        mv qvtCircuitCustom.r1cs qvtCircuit32.r1cs
+        mv qvtCustom.params qvt32.params
+        mv batchUstCustom.dat batchUst32.dat
+        mv qvtCustom.dat qvt32.dat
+        mv batchUstCustom.sym batchUst32.sym
+        mv qvtCustom.sym qvt32.sym
+        chmod u+x qvt32 batchUst32
+    - name: Build CLR
       run: |
         cd monorepo
         yarn && yarn build
+    - name: Start hardhat network
+      run: |
+        cd monorepo
         yarn start:node &
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+    - name: Run e2e tests
+      run: |
+        cd monorepo
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
         yarn test:e2e
