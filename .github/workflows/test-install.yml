@@ -9,14 +9,19 @@ jobs:
   checkLabels:
     runs-on: ubuntu-22.04
     if: github.event.pull_request.labels.*.name
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - run: echo pull request has label
+    - id: set-matrix
+      run: |
+        echo pull request has label
+        JSON=${{ toJson(github.event.pull_request.labels) }}
+        echo "matrix={\"include\":$JSON}" >> $GITHUB_OUTPUT
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkLabels]
     strategy:
-      matrix:
-        label: ${{ toJson(github.event.pull_request.labels) }}
+      matrix: ${{ fromJson(needs.checkLabels.outputs.matrix) }}
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
