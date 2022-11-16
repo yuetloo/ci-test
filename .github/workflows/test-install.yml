@@ -48,8 +48,8 @@ jobs:
         chmod +x params/batchUstSmall params/qvtSmall
         chmod +r params/*
         params/batchUstSmall
-        cp circuits/params/BatchUpdateStateTreeVerifierSmall.sol monorepo/contracts/contracts/snarkVerifiers/
-        cp circuits/params/QuadVoteTallyVerifierSmall.sol monorepo/contracts/contracts/snarkVerifiers/
+        cp params/BatchUpdateStateTreeVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
+        cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
     - name: Build and run e2e tests
       run: |
         cd monorepo
