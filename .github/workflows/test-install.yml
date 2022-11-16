@@ -5,7 +5,6 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: batch64
 
 jobs:
   checkTag:
@@ -16,7 +15,7 @@ jobs:
       - name: check tag name
         run: |
           TAG=${GITHUB_REF##*/}
-          echo "::set-output name=tag::$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkTag]
@@ -27,6 +26,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install g++ library dependencies
       run: |
+        echo "tag: " ${{ needs.checkTag.outputs.tag }}
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
@@ -37,7 +37,7 @@ jobs:
       run: |
         cargo install zkutil --version 0.3.2
     - name: Checkout MACI
-      if: ${{ needs.checkTag.outputs.app }} != 'batch64'
+      if: ${{ needs.checkTag.outputs.tag }} != 'batch64'
       uses: actions/checkout@v3
       with:
         repository: privacy-scaling-explorations/maci
@@ -49,12 +49,12 @@ jobs:
         ref: fix/circuit-batch-size
         path: monorepo
     - name: Build MACI
-      if:  ${{ needs.checkTag.outputs.app }} != 'batch64'
+      if:  ${{ needs.checkTag.outputs.tag }} != 'batch64'
       run: |
         git config --global url."https://".insteadOf ssh://
         npm i && npm run bootstrap && npm run build
     - name: Build snarks - small
-      if:  ${{ needs.checkTag.outputs.app }} == 'small'
+      if:  ${{ needs.checkTag.outputs.tag }} == 'small'
       run: |
         cd circuits
         ./scripts/buildSnarksSmall.sh
@@ -65,7 +65,7 @@ jobs:
         cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         ln -s params $GITHUB_WORKSPACE/params
     - name: Download batch 64 params
-      if:  ${{ needs.checkTag.outputs.app }} == 'batch64'
+      if:  ${{ needs.checkTag.outputs.tag }} == 'batch64'
       run: |
         $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build CLR
