@@ -12,13 +12,13 @@ jobs:
     steps:
       - name: check label
         run: |
-          echo labels ${{ github.event.pull_request.labels }}
+          echo labels ${{ toJson(github.event.pull_request.labels) }}
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkLabels]
     strategy:
       matrix:
-        label: ${{ github.event.pull_request.labels }}
+        label: ${{ toJson(github.event.pull_request.labels) }}
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
