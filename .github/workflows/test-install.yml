@@ -17,12 +17,13 @@ jobs:
     - id: set-matrix
       run: |
         echo pull request has label
-        JSON="["
+        JSON="[{\"label\":["
         for LABEL in $(echo $PULL_LABELS | jq -r '.[].name'); do
           JSON+="$LABEL,"
         done
-        JSON="${JSON::-1}]"
+        JSON="${JSON::-1}]}]"
         echo "matrix={\"include\":$JSON}" >> $GITHUB_OUTPUT
+        echo "matrix={\"include\":$JSON}"
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkLabels]
