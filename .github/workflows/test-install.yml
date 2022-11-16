@@ -15,7 +15,7 @@ jobs:
     - id: set-matrix
       run: |
         echo pull request has label
-        echo "matrix={\"include\": ${{ toJson(github.event.pull_request.labels) }}}" >> $GITHUB_OUTPUT
+        echo "matrix={\"include\":${{toJson(github.event.pull_request.labels)}}}" >> $GITHUB_OUTPUT
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkLabels]
