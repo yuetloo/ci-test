@@ -9,12 +9,14 @@ jobs:
   checkLabels:
     runs-on: ubuntu-22.04
     if: github.event.pull_request.labels.*.name
+    env:
+      PULL_LABELS: ${{ toJson(github.event.pull_request.labels) }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - id: set-matrix
       run: |
-        echo pull request has label
+        echo pull request has label ${{ env.PULL_LABELS }}
         echo "matrix={\"include\":${{toJson(github.event.pull_request.labels)}}}" >> $GITHUB_OUTPUT
   build-snarks:
     runs-on: ubuntu-22.04
