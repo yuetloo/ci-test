@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-22.04
     if: github.event.pull_request.labels.*.name
     steps:
-      - name: check label
-        run: |
-          echo labels ${{ toJson(github.event.pull_request.labels) }}
+      run: |
+        echo pull request has label
   build-snarks:
     runs-on: ubuntu-22.04
     needs: [checkLabels]
