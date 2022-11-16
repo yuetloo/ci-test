@@ -13,6 +13,7 @@ jobs:
       tag:  ${{ steps.check.outputs.tag }}
     steps:
       - name: check tag name
+        id: check
         run: |
           TAG=${GITHUB_REF##*/}
           echo "tag=$TAG" >> $GITHUB_OUTPUT
