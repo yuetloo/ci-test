@@ -19,7 +19,7 @@ jobs:
         echo pull request has label
         JSON="[{\"label\":["
         for LABEL in $(echo $PULL_LABELS | jq -r '.[].name'); do
-          JSON+="$LABEL,"
+          JSON+="\"$LABEL\","
         done
         JSON="${JSON::-1}]}]"
         echo "matrix={\"include\":$JSON}" >> $GITHUB_OUTPUT
