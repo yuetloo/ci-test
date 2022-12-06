@@ -10,12 +10,25 @@ on:
       tags:
         description: 'Test scenario tags'  
 
+env:
+  WALLET_PRIVATE_KEY:  ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
   printInputs:
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo "Log level: ${{ github.event.inputs.logLevel }}"
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        npm install
+    - name: Run test script
+      run: |
         echo "Tags: ${{ github.event.inputs.tags }}" 
+        yarn hardhat run scripts/get-block-number.js --network arbitrum-goerli
+
 
