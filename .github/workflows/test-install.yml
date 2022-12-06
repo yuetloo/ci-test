@@ -1,27 +1,34 @@
 name: End to end tests
 
-on:
-  push:
-    tags:
-      - '*'
+on: pull_request
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: batch64
 
 jobs:
-  checkTag:
+  checkLabels:
     runs-on: ubuntu-22.04
+    if: github.event.pull_request.labels.*.name
+    env:
+      PULL_LABELS: ${{ toJson(github.event.pull_request.labels) }}
     outputs:
-      tag:  ${{ steps.check.outputs.tag }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: check tag name
-        run: |
-          TAG=${GITHUB_REF##*/}
-          echo "::set-output name=tag::$TAG"
+    - id: set-matrix
+      run: |
+        echo pull request has label
+        JSON="[{\"label\":["
+        for LABEL in $(echo $PULL_LABELS | jq -r '.[].name'); do
+          JSON+="\"$LABEL\","
+        done
+        JSON="${JSON::-1}]}]"
+        echo "matrix={\"include\":$JSON}" >> $GITHUB_OUTPUT
+        echo "matrix={\"include\":$JSON}"
   build-snarks:
     runs-on: ubuntu-22.04
-    needs: [checkTag]
+    needs: [checkLabels]
+    strategy:
+      matrix: ${{ fromJson(needs.checkLabels.outputs.matrix) }}
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
@@ -29,6 +36,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install g++ library dependencies
       run: |
+        echo matrix label ${{ matrix.label }}
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
@@ -39,7 +47,7 @@ jobs:
       run: |
         cargo install zkutil --version 0.3.2
     - name: Checkout MACI
-      if: ${{ needs.checkTag.outputs.app }} != 'batch64'
+      if: ${{ matrix.label }} != 'batch64'
       uses: actions/checkout@v3
       with:
         repository: privacy-scaling-explorations/maci
@@ -51,12 +59,12 @@ jobs:
         ref: fix/circuit-batch-size
         path: monorepo
     - name: Build MACI
-      if:  ${{ needs.checkTag.outputs.app }} != 'batch64'
+      if:  ${{ matrix.label }} != 'batch64'
       run: |
         git config --global url."https://".insteadOf ssh://
         npm i && npm run bootstrap && npm run build
     - name: Build snarks - small
-      if:  ${{ needs.checkTag.outputs.app }} == 'small'
+      if:  ${{ matrix.label }} == 'small'
       run: |
         cd circuits
         ./scripts/buildSnarksSmall.sh
@@ -67,7 +75,7 @@ jobs:
         cp params/QuadVoteTallyVerifierSmall.sol $GITHUB_WORKSPACE/monorepo/contracts/contracts/snarkVerifiers/
         ln -s params $GITHUB_WORKSPACE/params
     - name: Download batch 64 params
-      if:  ${{ needs.checkTag.outputs.app }} == 'batch64'
+      if:  ${{ matrix.label }} == 'batch64'
       run: |
         $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build CLR
