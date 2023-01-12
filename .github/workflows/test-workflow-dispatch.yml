@@ -23,11 +23,12 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: export key
       run: |
-        echo "${{ secrets.SSH_KEY }}" > clrfund.pem
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/clrfund.pem
         echo "coordingator key" > coordinator.pk
         ls -l coordinator.pk
         ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com
-        scp -i clrfund.pem coordinator.pk ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com:~
+        scp -i ~/.ssh/clrfund.pem coordinator.pk ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com:~
     - name: Checkout source code
       uses: actions/checkout@v3
     - name: Install dependencies
