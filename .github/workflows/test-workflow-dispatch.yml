@@ -32,6 +32,7 @@ jobs:
     - name: Run test script
       run: |
         echo "Tags: ${{ github.event.inputs.tags }}" 
+        scripts/encrypt.sh ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }} ${{ secrets.SSH_KEY }}
         yarn hardhat run scripts/get-block-number.js --network arbitrum-goerli
         which scp
 
