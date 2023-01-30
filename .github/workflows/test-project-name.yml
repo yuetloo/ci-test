@@ -5,6 +5,7 @@ on:
 
 env:
   GITHUB_REPO_NAME:  ${{ github.event.repository.name }}
+  VUE_BASE: '/${{ github.event.repository.name }}/'
 
 jobs:
   printInputs:
@@ -17,3 +18,4 @@ jobs:
     - name: echo repo name
       run: |
         echo $GITHUB_REPO_NAME
+        echo ${{ env.VUE_BASE }}
