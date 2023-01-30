@@ -5,7 +5,8 @@ on:
 
 env:
   GITHUB_REPO_NAME:  ${{ github.event.repository.name }}
-  VUE_BASE: '/${{ github.event.repository.name }}/'
+  VITE_BASE: '/${{ github.event.repository.name }}/'
+  GEN_CNAME: 'no'
 
 jobs:
   printInputs:
@@ -16,6 +17,7 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: echo repo name
+      if: env.GEN_CNAME == 'yes'
       run: |
         echo $GITHUB_REPO_NAME
         echo ${{ env.VUE_BASE }}
