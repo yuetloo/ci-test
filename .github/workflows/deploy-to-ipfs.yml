@@ -38,6 +38,11 @@ jobs:
         ipfs add --recursive --progress ./example/ | tee add.out
         hash=$(cat add.out | sed -n 's/added \(.*\) example$/\1/p')
         echo "cid=${hash}" >> $GITHUB_OUTPUT
+
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
         curl "https://api.pinata.cloud/pinning/pinByHash" \
           -X POST \
           --header 'Authorization: Bearer PINATA JWT' \
