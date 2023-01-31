@@ -44,9 +44,7 @@ jobs:
       run: |
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinByHash' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
-          --data-raw '{
-              "hashToPin": "${{ needs.build.outputs.cid }}",
-              "pinataMetadata": {
-                "name": "test-hello",
-              }
+          --data-raw '{ \
+              "hashToPin": "${{ needs.build.outputs.cid }}", \
+              "pinataMetadata": {} \
           }'
