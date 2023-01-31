@@ -1,6 +1,8 @@
 name: Deploy to IPFS
 
-on: workflow_dispatch
+on:
+  push:
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 16.x
