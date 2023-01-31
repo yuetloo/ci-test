@@ -39,14 +39,13 @@ jobs:
         hash=$(cat add.out | sed -n 's/added \(.*\) example$/\1/p')
         echo "cid=${hash}" >> $GITHUB_OUTPUT
   
-  upload:
+
+  pin:
     runs-on: ubuntu-22.04
     needs: build
     steps:
-    - name: Use Node.js ${{ env.NODE_VERSION }}
+    - name: Pin to pinata
       run: |
-        curl "https://api.pinata.cloud/pinning/pinByHash" \
-          -X POST \
-          --header 'Authorization: Bearer PINATA JWT' \
-          --header 'Content-Type: application/json' \
-          --data-raw '{"hashToPin":"${{ build.outputs.cid }}"}'
+        curl --location --request POST 'https://api.pinata.cloud/pinning/pinByHash' \
+          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+          --data-raw '{ "hashToPin": "${{ needs.build.outputs.cid }}"}'
