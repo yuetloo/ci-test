@@ -1,0 +1,47 @@
+name: End to end tests
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    outputs:
+      cid: ${{ steps.upload.outputs.cid }}
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install IPFS
+      run: |
+        wget https://dist.ipfs.tech/kubo/v0.18.1/kubo_v0.18.1_linux-amd64.tar.gz
+        tar -xvzf kubo_v0.18.1_linux-amd64.tar.gz
+        cd kubo
+        ./install.sh
+        ipfs --version
+    - name: Run IPFS daemon
+      run: |
+        ipfs daemon &
+    - name: Build
+      run: |
+        mkdir -p exmaple
+        echo "hello world" > example/hello.txt
+    - id: upload
+      name: upload folder
+      run: |
+        ipfs add --recursive --progress ./example/
+        echo "cid=world" >> $GITHUB_OUTPUT    
+  pin:
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+    - name: Pin to pinata
+      run: |
+        curl --location --request POST 'https://api.pinata.cloud/pinning/pinByHash' \
+          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+          --data-raw '{
+              "hashToPin": "${{ needs.build.outputs.cid }}"
+          }'
