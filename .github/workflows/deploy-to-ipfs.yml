@@ -42,4 +42,4 @@ jobs:
           -X POST \
           --header 'Authorization: Bearer PINATA JWT' \
           --header 'Content-Type: application/json' \
-          -d '{"hashToPin":"${{ outputs.cid }}"'
+          -d '{"hashToPin":"${{ build.outputs.cid }}"'
