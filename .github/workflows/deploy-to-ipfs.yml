@@ -24,6 +24,7 @@ jobs:
         ipfs --version
     - name: Run IPFS daemon
       run: |
+        ipfs init
         ipfs daemon &
     - name: Build
       run: |
