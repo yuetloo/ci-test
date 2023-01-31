@@ -44,8 +44,5 @@ jobs:
     steps:
     - name: Pin to pinata
       run: |
-        curl --location --request POST 'https://api.pinata.cloud/pinning/pinByHash' \
-          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
-          --data-raw '{ \
-              "hashToPin": "${{ needs.build.outputs.cid }}", \
-          }'
+        ipfs pin remote service add pinata https://api.pinata.cloud/psa ${{ secrets.PINATA_JWT }}
+        ipfs pin remote add --service=pinata --name=mytest ${{ needs.build.outputs.cid }}
