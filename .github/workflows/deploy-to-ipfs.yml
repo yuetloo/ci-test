@@ -27,7 +27,7 @@ jobs:
         ipfs daemon &
     - name: Build
       run: |
-        mkdir -p exmaple
+        mkdir -p example
         echo "hello world" > example/hello.txt
     - id: upload
       name: upload folder
