@@ -24,7 +24,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: export key
       run: |
-        echo github.ref_name ${{ github.ref }}
+        echo github.ref_name ${{ github.ref_name }}
         echo -n "${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}" | openssl enc -aes-256-cbc -a -salt -pass pass:${{ secrets.SSH_KEY }} -pbkdf2 -iter 100000
     - name: Checkout source code
       uses: actions/checkout@v3
