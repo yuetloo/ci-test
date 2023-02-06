@@ -21,10 +21,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: Install xsel
-      run: |
-        sudo apt update
-        sudo apt-get install xsel
     - name: Build
       run: |
         mkdir -p example
