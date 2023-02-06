@@ -1,4 +1,4 @@
-name: Deploy to IPFS
+name: Finalize round
 
 on:
   workflow_dispatch:
