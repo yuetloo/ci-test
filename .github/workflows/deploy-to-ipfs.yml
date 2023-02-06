@@ -33,4 +33,5 @@ jobs:
       name: upload folder
       run: |
         npm install -g ipfs-deploy
-        ipfs-deploy -c QmV6GNfjCh6SAayiks7rrAYtSWzadzBhqbpNg52yzhKu6Z -d cloudflare --no-clipboard
+        # use -C to stop copying to clipboard
+        ipfs-deploy -c QmV6GNfjCh6SAayiks7rrAYtSWzadzBhqbpNg52yzhKu6Z -d cloudflare -C
