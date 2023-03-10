@@ -41,7 +41,7 @@ jobs:
     - name: Build
       run: |
         cd monorepo
-        echo yarn && yarn build
+        #yarn && yarn build
     - name: Download batch 64 params
       run: |
         ls -la $GITHUB_WORKSPACE
