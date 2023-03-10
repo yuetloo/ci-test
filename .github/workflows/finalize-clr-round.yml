@@ -30,6 +30,8 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
+    - name: Checkout CI scripts
+      uses: actions/checkout@v3
     - name: Checkout CLR
       uses: actions/checkout@v3
       with:
