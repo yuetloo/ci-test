@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/yuetloo/clrfund-arbitrum-goerli"
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/yuetloo/clrfund-dev"
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
