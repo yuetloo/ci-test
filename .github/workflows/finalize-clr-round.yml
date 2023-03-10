@@ -55,7 +55,7 @@ jobs:
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
         echo "ROUND_ADDRESS" $ROUND_ADDRESS
         # tally and finalize
-        cd contracts
+        cd monorepo/contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts
         yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
