@@ -2,12 +2,12 @@ name: Finalize round
 
 on:
   workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Clrfund branch name'
+        required: true
+        default: 'fix/claim'
 
-inputs:
-  branch_name:
-    description: 'Clrfund branch name'
-    required: true
-    default: 'fix/claim'
 
 env:
   NODE_VERSION: 16.x
@@ -44,7 +44,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: clrfund/monorepo
-        ref: ${{ inputs.branch_name }}
+        ref: ${{ github.event.inputs.branch_name }}
         path: monorepo
     - name: Build
       run: |
