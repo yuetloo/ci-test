@@ -18,7 +18,6 @@ env:
 
 jobs:
   build:
-  build:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
