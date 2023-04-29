@@ -40,5 +40,6 @@ jobs:
       name: upload folder
       run: |
         cd monorepo/vue-app
+        npm install -g ipfs-deploy
         # use -C to stop copying to clipboard
-        npx ipfs-deploy -p pinata -d cloudflare -C dist
+        ipfs-deploy -p pinata -d cloudflare -C dist
