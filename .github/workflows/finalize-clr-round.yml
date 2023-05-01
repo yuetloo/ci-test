@@ -7,11 +7,15 @@ on:
         description: 'Clrfund branch name'
         required: true
         default: 'fix/claim'
+      subgraph_name:
+        description: 'e.g. yuetloo/clrfund-dev'
+        required: true
+        default: 'yuetloo/clrfund-vue3'
 
 
 env:
   NODE_VERSION: 16.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/yuetloo/clrfund-dev"
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/${{ github.event.inputs.branch_name }}"
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
