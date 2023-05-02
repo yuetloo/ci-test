@@ -7,9 +7,9 @@ on:
         type: choice
         description: major, minor, or patch version
         options:
-        - major
-        - minor
         - patch
+        - minor
+        - major
 
 jobs:
   createVersion:
