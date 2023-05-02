@@ -17,6 +17,7 @@ env:
   IPFS_DEPLOY_INFURA__PROJECT_SECRET: ${{ secrets.INFURA_PROJECT_SECRET }}
   IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.PINATA_API_KEY }}
   IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.PINATA_SECRET }}
+  BASE_URL: vue-app/dist
 
 jobs:
   build:

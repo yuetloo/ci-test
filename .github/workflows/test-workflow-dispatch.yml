@@ -3,39 +3,27 @@ name: Manual test
 on: 
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'  
-
-env:
-  WALLET_PRIVATE_KEY:  ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
+      version:
+        type: choice
+        description: major, minor, or patch version
+        options:
+        - major
+        - minor
+        - patch
 
 jobs:
-  printInputs:
-    if: github.ref_name != 'main'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    - name: export key
-      run: |
-        echo github.ref_name ${{ github.ref_name }}
-        echo -n "${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}" | openssl enc -aes-256-cbc -a -salt -pass pass:${{ secrets.SSH_KEY }} -pbkdf2 -iter 100000
     - name: Checkout source code
       uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         npm install
-    - name: Run test script
+    - name: setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+    - name: Create new version
       run: |
-        echo "Tags: ${{ github.event.inputs.tags }}" 
-        scripts/encrypt.sh ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }} ${{ secrets.SSH_KEY }}
-        yarn hardhat run scripts/get-block-number.js --network arbitrum-goerli
-        which scp
-
-
+        echo "Version: ${{ github.event.inputs.version }}" 
+        npm version ${{ github.event.inputs.version }}
+        git push origin main
