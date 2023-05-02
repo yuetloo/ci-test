@@ -25,5 +25,7 @@ jobs:
     - name: Create new version
       run: |
         echo "Version: ${{ github.event.inputs.version }}" 
-        npm version ${{ github.event.inputs.version }}
+        VERSION=$(npm version ${{ github.event.inputs.version }})
+        git tag -a ${VERSION} -m ${VERSION}
         git push origin main
+        git push origin --tags
