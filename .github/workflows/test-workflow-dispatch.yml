@@ -20,8 +20,14 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
+    - name: setup git config
+      run: |
+        # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
     - name: Create new version
       run: |
         echo "Version: ${{ github.event.inputs.version }}" 
-        npm version ${{ github.event.inputs.version }}
+        VERSION=$(npm version ${{ github.event.inputs.version }})
+        git tag ${VERSION}
         git push origin --tags
