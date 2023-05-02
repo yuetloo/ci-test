@@ -29,4 +29,5 @@ jobs:
       run: |
         echo "Version: ${{ github.event.inputs.version }}" 
         npm version ${{ github.event.inputs.version }}
+        git push origin main
         git push origin --tags
