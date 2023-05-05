@@ -8,7 +8,7 @@ on:
         required: true
         default: 'fix/claim'
       subgraph_name:
-        description: 'e.g. yuetloo/clrfund-dev'
+        description: 'Clrfund subgraph name'
         required: true
         default: 'yuetloo/clrfund-vue3'
 
