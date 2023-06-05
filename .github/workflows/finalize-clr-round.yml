@@ -6,11 +6,11 @@ on:
       branch_name:
         description: 'Clrfund branch name'
         required: true
-        default: 'cohort/spaghetteth'
+        default: 'fix/leaderboard'
       subgraph_name:
         description: 'Clrfund subgraph name'
         required: true
-        default: 'yuetloo/clrfund-spaghetteth'
+        default: 'yuetloo/clrfund-dev'
 
 
 env:
