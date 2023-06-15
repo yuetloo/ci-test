@@ -11,7 +11,7 @@ env:
   COORDINATOR_PK: ${{ secrets.GNOSIS_COORDINATOR_MACI_PRIVATE_KEY }}
   ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY_ARBITRUM }}
   ETHERSCAN_URL: "https://api-goerli.arbiscan.io"
-  BRANCH_NAME: "cohort/gnosis"
+  BRANCH_NAME: "merge/gnosis"
 
 
 jobs:
