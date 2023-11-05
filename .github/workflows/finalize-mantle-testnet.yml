@@ -1,4 +1,4 @@
-name: Finalize round
+name: Finalize mantle testnet
 
 on:
   workflow_dispatch:
