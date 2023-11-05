@@ -39,4 +39,5 @@ jobs:
     - name: Run finalize scripts
       run: |
         cd monorepo/contracts
+        curl https://clrfund.mypinata.cloud/ipfs/QmQ7fDc8xWtCjW27H8nsz9HYjy7bkxYp62SBhDpiCz6UHS > tally.json
         yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
