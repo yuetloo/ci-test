@@ -1,0 +1,73 @@
+name: MACI integration tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'MACI branch name'
+        required: true
+        default: 'fix/verify-tally-on-chain'
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install g++ library dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: Install rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: Install circom
+      run: |
+        git clone https://github.com/iden3/circom.git
+        cd circom
+        cargo build --release
+        cargo install --path circom
+    - name: Install zkutil
+      run: |
+        cargo install zkutil --version 0.3.2
+    - name: Checkout CI scripts
+      uses: actions/checkout@v3
+    - name: Checkout MACI
+      uses: actions/checkout@v3
+      with:
+        repository: clrfund/maci-v1
+        ref: ${{ github.event.inputs.branch_name }}
+        path: maci-v1
+    - name: Checkout rapidsnark
+      uses: actions/checkout@v3
+      with:
+        repository: iden3/rapidsnark
+        path: rapidsnark
+    - name: Build and install rapidsnark
+      run: |
+        cd rapidsnark
+        npm install
+        git submodule init
+        git submodule update
+        npx task createFieldSources
+        npx task buildProver
+    - name: Build
+      run: |
+        cd maci-v1
+        ./build.sh
+        cd contracts
+        npm run compileSol
+    - name: Download snark params
+      run: |
+        cd $GITHUB_WORKSPACE/integrationTests
+        ./scripts/download_zkeys.sh
+    - name: Run integration tests
+      run: |
+        cd maci-v1/integrationTests
+        npm test
