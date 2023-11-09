@@ -65,7 +65,7 @@ jobs:
         npm run compileSol
     - name: Download snark params
       run: |
-        cd $GITHUB_WORKSPACE/integrationTests
+        cd maci-v1/integrationTests
         ./scripts/download_zkeys.sh
     - name: Run integration tests
       run: |
