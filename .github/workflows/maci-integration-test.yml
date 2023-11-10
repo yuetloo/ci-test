@@ -57,7 +57,8 @@ jobs:
         git submodule update
         npx task createFieldSources
         npx task buildProver
-        ls build/prover
+        pwd
+        ls -la build/prover
     - name: Build
       run: |
         cd maci-v1
