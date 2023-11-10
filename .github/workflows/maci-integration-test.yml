@@ -67,6 +67,10 @@ jobs:
       run: |
         cd maci-v1/integrationTests
         ./scripts/download_zkeys.sh
+    - name: Run hardhat node
+      run: |
+        cd maci-v1/contracts
+        npm run hardhat &
     - name: Run integration tests
       run: |
         cd maci-v1/integrationTests
