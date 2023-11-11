@@ -57,8 +57,7 @@ jobs:
         git submodule update
         npx task createFieldSources
         npx task buildProver
-        cp -rf ../rapidsnark ~/
-        ls -la ~/rapidsnark/build/prover
+        echo $PWD
     - name: Build
       run: |
         cd maci-v1
@@ -76,4 +75,7 @@ jobs:
     - name: Run integration tests
       run: |
         cd maci-v1/integrationTests
+        sed -e 's+~/rapidsnark+../../rapidsnark+' integrations.yml > integrations.new.yml
+        mv integrations.new.yml integrations.yml
+        git diff integrations.yml
         npm test
