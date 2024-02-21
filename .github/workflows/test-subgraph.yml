@@ -1,0 +1,28 @@
+name: Subgraph network
+
+on: 
+  workflow_dispatch:
+    inputs:
+      subgraph_id:
+        description: 'Clrfund subgraph id'
+        required: true
+        default: 'QmfPjzSRsm7Lt665KaEEq6Tnr5QHLZt1SE3pxr2nix5pU2'
+
+jobs:
+  GetNetwork:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        npm install
+    - name: Get network
+      run: |
+        export SUBGRPAH_ID=${{ github.event.inputs.subgraph_id }}
+        export SUBGRAPH_QUERY=$(node -e 'console.log(`{"query":"{indexingStatuses(subgraphs: [\\\"${process.env.SUBGRAPH_ID}\\\"]) { chains { network }}}"}`)')
+        export SUBGRAPH_STATUS=$(curl -s -X POST -d "$SUBGRAPH_QUERY" https://api.thegraph.com/index-node/graphql)
+        echo SUBGRAPH_STATUS=$SUBGRAPH_STATUS
+        export NETWORK=$(node -e 'console.log(JSON.parse(process.env.SUBGRAPH_STATUS).data.indexingStatuses[0].chains[0].network)')
+        echo $NETWORK
+
